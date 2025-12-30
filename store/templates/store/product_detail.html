@@ -1,0 +1,42 @@
+{% extends 'store/base.html' %} {% block content %} 
+<div style="max-width: 800px; margin: 0 auto; padding: 20px; font-family: sans-serif;">
+  
+  <a href="{% url 'store_home' %}" style="text-decoration: none; color: #333;">← Volver a la tienda</a>
+
+  <div style="display: flex; gap: 40px; margin-top: 20px;">
+    
+    <div style="flex: 1;">
+      <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%; border-radius: 10px;">
+    </div>
+
+    <div style="flex: 1;">
+      <h1 style="font-size: 2.5rem; margin-bottom: 10px;">{{ product.name }}</h1>
+      <p style="font-size: 1.5rem; color: #555;">${{ product.price }}</p>
+      <hr>
+            <h3>Selecciona tu talla:</h3>
+
+            <form method="POST">
+                {% csrf_token %} <div style="display: flex; gap: 10px;">
+                {% for stock in product.stock_set.all %}
+                    {% if stock.quantity > 0 %}
+                        <div>
+                            <input type="radio" name="size" id="size_{{ stock.id }}" value="{{ stock.size }}">
+                            <label for="size_{{ stock.id }}" class="size-box">{{ stock.size }}</label>
+                        </div>
+                    {% else %}
+                        <div class="disabled-box">{{ stock.size }}</div>
+                    {% endif %}
+                {% endfor %}
+                </div>
+
+                <br>
+                <a href="{% url 'checkout' %}">
+                    <button type="submit" style="background: black; color: white; padding: 15px 30px; border: none; font-size: 1rem; cursor: pointer;">
+                        AÑADIR AL CARRO
+                    </button>
+                </a>
+        </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

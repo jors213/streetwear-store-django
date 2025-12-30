@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreetWear Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'store/style.css' %}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="{% url 'store_home' %}" style="text-decoration: none; color: white;">
+            <div class="brand-logo">🔥 STREETWEAR STORE</div>
+        </a>
+        
+        <a href="{% url 'view_cart' %}" class="cart-link">
+            CARRITO 
+            {% if request.session.cart|length > 0 %}
+                <span class="cart-count">{{ request.session.cart|length }}</span>
+            {% endif %}
+        </a>
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+
+</body>
+</html>

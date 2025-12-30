@@ -1,0 +1,36 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<div style="text-align: center; padding: 50px 20px;">
+    
+    <div style="font-size: 80px; margin-bottom: 20px;">🎉</div>
+
+    <h1 style="font-size: 3rem; margin-bottom: 10px;">¡PEDIDO CONFIRMADO!</h1>
+    
+    <p style="font-size: 1.2rem; color: #555;">
+        Gracias por tu compra, <span style="font-weight: bold; text-transform: uppercase;">{{ order.name }}</span>.
+    </p>
+    
+    <div style="background: #f9f9f9; display: inline-block; padding: 20px 40px; margin: 30px 0; border: 2px dashed black;">
+        <p style="margin: 0; font-size: 1.1rem;">Tu número de orden es:</p>
+        <h2 style="margin: 5px 0; font-size: 2.5rem;">#{{ order.id }}</h2>
+    </div>
+
+    <br>
+
+    <p>Hemos enviado un recibo a <strong>{{ order.email }}</strong></p>
+
+    <a href="{% url 'store_home' %}" style="
+        display: inline-block;
+        margin-top: 30px;
+        background: black; 
+        color: white; 
+        padding: 15px 30px; 
+        text-decoration: none; 
+        font-weight: bold;
+        transition: transform 0.2s;">
+        VOLVER A LA TIENDA
+    </a>
+
+</div>
+{% endblock %}

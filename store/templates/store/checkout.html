@@ -1,0 +1,62 @@
+{% extends 'store/base.html' %} {% block content %}
+
+<div style="max-width: 800px; margin: 0 auto; padding: 20px; font-family: sans-serif;">
+  
+  <a href="{% url 'view_cart' %}" style="text-decoration: none; color: #333;">← Volver al carrito</a>
+
+  <h1>Finalizar Compra 📦</h1>
+
+  <div style="display: flex; gap: 40px; margin-top: 20px;">
+    
+    <div style="flex: 1;">
+      <h3>1. Tus Datos de Envío</h3>
+      
+      <form method="POST">
+        {% csrf_token %}
+        
+        <div style="margin-bottom: 15px;">
+            <label>Nombre Completo:</label><br>
+            <input type="text" name="name" required style="width: 100%; padding: 10px; margin-top: 5px;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label>Correo Electrónico:</label><br>
+            <input type="email" name="email" required style="width: 100%; padding: 10px; margin-top: 5px;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label>Dirección de Envío:</label><br>
+            <input type="text" name="address" required style="width: 100%; padding: 10px; margin-top: 5px;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label>Ciudad:</label><br>
+            <input type="text" name="city" required style="width: 100%; padding: 10px; margin-top: 5px;">
+        </div>
+
+
+        <button type="submit" style="background: black; color: white; padding: 15px 30px; border: none; font-size: 1.2rem; cursor: pointer; width: 100%; margin-top: 20px;">
+            CONFIRMAR PEDIDO
+        </button>
+        
+      </form>
+    </div>
+
+    <div style="flex: 1; background: #f9f9f9; padding: 20px; border-radius: 10px; height: fit-content;">
+      <h3>2. Resumen</h3>
+      
+      {% for item in cart %}
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+            <span>{{ item.name }} ({{ item.size }})</span>
+            <span>${{ item.price }}</span>
+        </div>
+      {% endfor %}
+
+      <div style="margin-top: 20px; border-top: 2px solid black; padding-top: 10px;">
+          <h2>Total: ${{ total }}</h2>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

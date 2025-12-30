@@ -1,0 +1,56 @@
+{% extends 'store/base.html' %} {% block content %}
+
+<div style="max-width: 800px; margin: 0 auto; padding: 20px; font-family: sans-serif;">
+  
+  <a href="{% url 'store_home' %}" style="text-decoration: none; color: #333;">← Seguir comprando</a>
+
+  <h1>Tu Carrito de Compras 🛒</h1>
+
+  {% if cart %}
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+      <thead>
+        <tr style="background: #f0f0f0; text-align: left;">
+          <th style="padding: 10px;">Producto</th>
+          <th style="padding: 10px;">Talla</th>
+          <th style="padding: 10px;">Precio</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in cart %}
+          <tr style="border-bottom: 1px solid #ddd;">
+            <td style="padding: 15px; display: flex; align-items: center; gap: 15px;">
+               <img src="{{ item.image_url }}" style="width: 60px; border-radius: 5px;">
+               <span style="font-weight: bold;">{{ item.name }}</span>
+            </td>
+            <td style="padding: 15px;">
+                <span style="background: black; color: white; padding: 5px 10px;">
+                    {{ item.size }}
+                </span>
+            </td>
+            <td style="padding: 15px;">${{ item.price }}</td>
+            <td style="padding: 15px;">
+                <a href="{% url 'remove_from_cart' forloop.counter0 %}" style="color: red; text-decoration: none; font-weight: bold;">
+                    Eliminar
+                </a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div style="text-align: right; margin-top: 20px;">
+        <h2>Total a pagar: ${{ total }}</h2>
+        <a href="{% url 'checkout' %}">
+            <button style="background: #28a745; color: white; padding: 15px 30px; border: none; font-size: 1.2rem; cursor: pointer; border-radius: 5px;">
+                PAGAR AHORA
+            </button>
+        </a>
+    </div>
+
+  {% else %}
+    <div style="text-align: center; margin-top: 50px;">
+        <p style="font-size: 1.5rem; color: #888;">Tu carrito está vacío ☁️</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
