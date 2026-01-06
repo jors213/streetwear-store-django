@@ -1,19 +1,87 @@
-{% extends 'store/base.html' %} {% block content %}
-    <div class="container">
-        <div class="product-grid">
-            {% for product in products %}
-                <a href="{% url 'product_detail' product.pk %}" class="product-card">
-                    <div class="product-image-container">
-                        {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                        {% endif %}
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">{{ product.name }}</h3>
-                        <div class="product-price">${{ product.price }}</div>
-                    </div>
-                </a>
-            {% endfor %}
-        </div>
+{% extends 'store/base.html' %}
+
+{% block content %}
+
+<div style="height: 80vh; background: url('/media/products/PoleronBangAzul.png') center/cover; display:flex; align-items:center; justify-content:center; position:relative;">
+    <div style="background: rgba(0,0,0,0.6); padding: 2rem; text-align:center; border: 2px solid var(--gengar-neon);">
+        <h1 style="font-size: 4rem; margin:0; text-transform:uppercase;">Urban <span style="color:var(--gengar-neon)">Chaos</span></h1>
+        <p style="font-size: 1.2rem;">Viste la calle. Viste Gengar.</p>
+        <a href="#nuevas" class="btn-gengar" style="margin-top:20px; font-size:1.2rem;">Ver Colección</a>
     </div>
+</div>
+
+<div id="nuevas">
+    <h2 class="section-title">🔥 Nuevas Adquisiciones 🔥</h2>
+    <div class="products-grid">
+        {% for product in products %}
+            {% if product.is_new_arrival %}
+            <div class="product-card">
+                <div class="product-image">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <h3>{{ product.name }}</h3>
+                    <p style="color: var(--gengar-neon); font-size: 1.2rem; font-weight:bold;">${{ product.price }}</p>
+                    <a href="{% url 'product_detail' product.pk %}" class="btn-gengar">Ver Flow</a>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<div id="poleras">
+    <h2 class="section-title">Poleras & Tops</h2>
+    <div class="products-grid">
+        {% for product in products %}
+            {% if product.category == 'poleras' %}
+            <div class="product-card">
+                <div class="product-image">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <h3>{{ product.name }}</h3>
+                    <p style="color: var(--gengar-neon); font-size: 1.2rem; font-weight:bold;">${{ product.price }}</p>
+                    <a href="{% url 'product_detail' product.pk %}" class="btn-gengar">Ver Flow</a>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<div class="reviews-section">
+    <h2 class="section-title" style="margin-top:0;">Lo que dicen en la calle</h2>
+    <div class="review-card">
+        <p>"La calidad de la tela es increíble, pesada como me gusta. El envío fue rápido."</p>
+        <h4 style="color:var(--gengar-neon)">- @jors_dev</h4>
+    </div>
+    <div class="review-card">
+        <p>"El fit es perfecto, oversize real. Definitivamente compro de nuevo."</p>
+        <h4 style="color:var(--gengar-neon)">- @maria_ux</h4>
+    </div>
+    <div class="review-card">
+        <p>"Llegó con stickers de regalo, detalles que valen la pena. 10/10"</p>
+        <h4 style="color:var(--gengar-neon)">- @carlos_py</h4>
+    </div>
+</div>
+
+<div style="max-width: 800px; margin: 4rem auto; padding: 0 2rem;">
+    <h2 class="section-title">Preguntas Frecuentes</h2>
+    
+    <details style="background:#1A0B2E; padding:1rem; margin-bottom:1rem; border:1px solid var(--gengar-primary);">
+        <summary style="font-weight:bold; cursor:pointer;">¿Cuánto tardan los envíos?</summary>
+        <p style="margin-top:10px; color:var(--text-gray);">Enviamos en 24-48 horas hábiles a todo Santiago. Regiones 3-5 días hábiles.</p>
+    </details>
+
+    <details style="background:#1A0B2E; padding:1rem; margin-bottom:1rem; border:1px solid var(--gengar-primary);">
+        <summary style="font-weight:bold; cursor:pointer;">¿Cómo sé mi talla?</summary>
+        <p style="margin-top:10px; color:var(--text-gray);">Revisa nuestra tabla de medidas en la descripción de cada producto. Nuestro corte es Oversize.</p>
+    </details>
+</div>
+
 {% endblock %}

@@ -4,27 +4,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreetWear Store</title>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <title>StreetWear Store | Urban Style</title>
     <link rel="stylesheet" href="{% static 'store/style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 
+    <div id="newsletter-popup" class="popup-overlay">
+        <div class="popup-content">
+            <span class="close-btn" onclick="closePopup()">&times;</span>
+            <h2 style="color: var(--gengar-neon);">¡ESPERA!</h2>
+            <p>Únete al lado oscuro del streetwear.</p>
+            <p>Usa este código en tu primera compra:</p>
+            <div class="discount-code">GENGAR10</div>
+            <p style="font-size: 0.8rem; color: gray;">*Válido por 24 horas</p>
+            <button class="btn-gengar" onclick="closePopup()">LO QUIERO</button>
+        </div>
+    </div>
+
+    <div class="ticker-wrap">
+        <div class="ticker">
+            <div class="ticker-item">ENVÍOS GRATIS POR COMPRAS SOBRE $50.000</div>
+            <div class="ticker-item">🔥 NUEVA COLECCIÓN DISPONIBLE 🔥</div>
+            <div class="ticker-item">ENVÍOS A TODO CHILE 🇨🇱</div>
+            <div class="ticker-item">ENVÍOS GRATIS POR COMPRAS SOBRE $50.000</div> </div>
+    </div>
+
     <nav class="navbar">
-        <a href="{% url 'store_home' %}" style="text-decoration: none; color: white;">
-            <div class="brand-logo">🔥 STREETWEAR STORE</div>
-        </a>
+        <a href="{% url 'store_home' %}" class="nav-brand">GENGAR<span style="color:white">STORE</span></a>
         
-        <a href="{% url 'view_cart' %}" class="cart-link">
-            CARRITO 
-            {% if request.session.cart|length > 0 %}
-                <span class="cart-count">{{ request.session.cart|length }}</span>
-            {% endif %}
-        </a>
+        <div class="nav-links">
+            <a href="{% url 'store_home' %}">Inicio</a>
+            <a href="#nuevas">New Arrivals</a>
+            <a href="#poleras">Poleras</a>
+            <a href="#pantalones">Pantalones</a>
+            <a href="{% url 'view_cart' %}">
+                <i class="fas fa-shopping-cart"></i> Carrito
+                {% if request.session.cart|length > 0 %}
+                    <span style="color: var(--gengar-neon);">({{ request.session.cart|length }})</span>
+                {% endif %}
+            </a>
+        </div>
     </nav>
 
-    {% block content %}
-    {% endblock %}
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
 
+    <footer style="background:black; padding: 2rem; text-align:center; margin-top:3rem; border-top: 1px solid var(--gengar-primary);">
+        <p>© 2026 Gengar Store. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        // Lógica Senior: Usar localStorage para no molestar al usuario cada vez que recarga
+        document.addEventListener("DOMContentLoaded", function() {
+            const popup = document.getElementById('newsletter-popup');
+            const hasSeenPopup = localStorage.getItem('hasSeenPopup');
+
+            if (!hasSeenPopup) {
+                setTimeout(() => {
+                    popup.classList.add('active');
+                }, 2000); // Aparece a los 2 segundos
+            }
+        });
+
+        function closePopup() {
+            const popup = document.getElementById('newsletter-popup');
+            popup.classList.remove('active');
+            // Guardamos que ya lo vio
+            localStorage.setItem('hasSeenPopup', 'true');
+        }
+    </script>
 </body>
 </html>

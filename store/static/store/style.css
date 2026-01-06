@@ -1,149 +1,215 @@
-input[type="radio"] { display: none; }
+/* store/static/store/style.css */
 
-.size-box {
-    padding: 10px 20px; 
-    border: 1px solid #000; 
-    cursor: pointer; 
-    background: white;
-    display: inline-block;
+:root {
+    /* PALETA GENGAR URBAN */
+    --gengar-dark: #1A0B2E;       /* Fondo muy oscuro (casi negro morado) */
+    --gengar-primary: #4A148C;    /* Morado Base */
+    --gengar-neon: #B026FF;       /* Morado Neón para acentos/botones */
+    --text-white: #F5F5F5;
+    --text-gray: #B39DDB;
+    --urban-black: #050505;
 }
 
-input[type="radio"]:checked + label {
-    background-color: black;
-    color: white;
-}
-
-.disabled-box {
-    padding: 10px 20px; 
-    border: 1px dashed #ccc; 
-    background: #f0f0f0; 
-    color: #aaa; 
-    cursor: not-allowed;
-    display: inline-block;
-}
-/* --- 1. RESET BÁSICO --- */
 body {
+    background-color: var(--gengar-dark);
+    color: var(--text-white);
+    font-family: 'Arial Black', 'Helvetica Neue', sans-serif; /* Fuente gruesa tipo Streetwear */
     margin: 0;
     padding: 0;
-    font-family: 'Roboto', sans-serif; /* Texto normal */
-    background-color: #fff;
-    color: #000;
 }
 
-h1, h2, h3, .brand-font {
-    font-family: 'Oswald', sans-serif; /* Fuente Streetwear para títulos */
+/* --- 1. TOP TICKER (Marquesina) --- */
+.ticker-wrap {
+    width: 100%;
+    background-color: var(--gengar-neon);
+    overflow: hidden;
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.ticker {
+    display: inline-block;
+    white-space: nowrap;
+    padding-left: 100%;
+    animation: ticker 15s linear infinite;
+}
+
+.ticker-item {
+    display: inline-block;
+    padding: 0 2rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--urban-black);
     text-transform: uppercase;
-    letter-spacing: 1px;
 }
 
-/* --- 2. HEADER ESTILO MARCA (Sticky) --- */
+@keyframes ticker {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-100%, 0, 0); }
+}
+
+/* --- NAVBAR --- */
 .navbar {
+    background-color: var(--urban-black);
+    padding: 1rem 2rem;
+    border-bottom: 2px solid var(--gengar-primary);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 40px;
-    background: #000; /* Fondo Negro */
-    color: #fff;      /* Texto Blanco */
-    position: sticky; /* Se pega al techo */
+    position: sticky;
     top: 0;
-    z-index: 1000;
-    border-bottom: 2px solid #333;
+    z-index: 100;
 }
 
-.brand-logo {
+.nav-brand {
     font-size: 1.8rem;
-    font-weight: 700;
-    margin: 0;
-    font-family: 'Oswald', sans-serif;
+    color: var(--gengar-neon);
+    text-transform: uppercase;
+    text-decoration: none;
+    letter-spacing: -1px;
 }
 
-.cart-link {
+.nav-links a {
+    color: var(--text-white);
     text-decoration: none;
-    color: #fff;
+    margin-left: 20px;
     font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    text-transform: uppercase;
+    font-size: 0.9rem;
     transition: color 0.3s;
 }
 
-.cart-link:hover {
-    color: #ccc;
+.nav-links a:hover {
+    color: var(--gengar-neon);
 }
 
-.cart-count {
-    background: #ff3b30; /* Rojo intenso */
-    color: white;
-    font-size: 0.8rem;
-    padding: 2px 6px;
-    border-radius: 4px; /* Cuadrado con puntas apenas suaves */
+/* --- POPUP DE DESCUENTO --- */
+.popup-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    display: flex; /* Se activará con JS */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.popup-overlay.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+.popup-content {
+    background: var(--urban-black);
+    border: 2px solid var(--gengar-neon);
+    padding: 3rem;
+    text-align: center;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 0 20px var(--gengar-primary);
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px; right: 15px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-gray);
+}
+
+.discount-code {
+    background: var(--gengar-neon);
+    color: var(--urban-black);
+    padding: 10px;
+    font-size: 1.5rem;
+    margin: 20px 0;
+    display: inline-block;
     font-weight: bold;
 }
 
-/* --- 3. LA GRILLA DE PRODUCTOS (GRID) --- */
-.container {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 0 20px;
+/* --- PRODUCT GRID --- */
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    margin: 3rem 0 1.5rem 0;
+    color: var(--text-white);
+    text-shadow: 2px 2px var(--gengar-primary);
 }
 
-.product-grid {
+.products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 30px;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-/* --- 4. TARJETAS DE PRODUCTO (CARD) --- */
 .product-card {
-    display: block;
-    text-decoration: none;
-    color: black;
-    background: white;
-    transition: all 0.3s ease;
-    position: relative; /* Para poner etiquetas encima si queremos luego */
+    background-color: #120821;
+    border: 1px solid var(--gengar-primary);
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
-/* Efecto al pasar el mouse: La imagen se acerca sutilmente */
-.product-card:hover .product-image-container img {
-    transform: scale(1.05);
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(176, 38, 255, 0.2);
+    border-color: var(--gengar-neon);
 }
 
-.product-image-container {
+.product-image img {
     width: 100%;
-    aspect-ratio: 1/1; /* Cuadrado perfecto */
-    overflow: hidden;  /* Para que el zoom no se salga del cuadro */
-    background-color: #f4f4f4; /* Fondo gris claro si la imagen no carga */
-    margin-bottom: 15px;
+    height: 300px;
+    object-fit: cover;
+    filter: grayscale(20%); /* Efecto urbano desaturado */
+    transition: filter 0.3s;
 }
 
-.product-image-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Cubre todo el cuadro */
-    object-position: center;
-    transition: transform 0.5s ease;
+.product-card:hover img {
+    filter: grayscale(0%);
 }
 
 .product-info {
-    text-align: left; /* Alineado a la izquierda como BVNG GVNG */
+    padding: 1rem;
+    text-align: center;
 }
 
-.product-name {
-    font-family: 'Oswald', sans-serif;
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin: 0 0 5px 0;
+.btn-gengar {
+    background-color: var(--gengar-primary);
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
     text-transform: uppercase;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 10px;
+    border: none;
+    cursor: pointer;
 }
 
-.product-price {
-    font-size: 1rem;
-    color: #555;
-    font-weight: 500;
+.btn-gengar:hover {
+    background-color: var(--gengar-neon);
+    color: var(--urban-black);
 }
 
-/* Botón fantasma "VER" que aparece al hover (Opcional) */
-.product-card:hover .product-name {
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
+/* --- REVIEWS SECTION --- */
+.reviews-section {
+    background-color: var(--urban-black);
+    padding: 4rem 2rem;
+    text-align: center;
+    margin-top: 4rem;
+}
+
+.review-card {
+    border: 1px solid var(--text-gray);
+    display: inline-block;
+    padding: 20px;
+    margin: 10px;
+    max-width: 300px;
+    font-style: italic;
 }
