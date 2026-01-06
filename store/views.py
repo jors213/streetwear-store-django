@@ -1,3 +1,4 @@
+import uuid
 from operator import index
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Product, Stock, Order, OrderItem
@@ -50,13 +51,12 @@ def remove_from_cart(request, index):
         request.session.modified = True
     return redirect('view_cart')
 
-@transaction.atomic # <--- El "escudo" atómico: O todo sale bien, o nada se guarda.
+@transaction.atomic
 def checkout(request):
     cart = request.session.get('cart', [])
     if not cart:
         return redirect('store_home')
 
-    # Calculamos total asegurando que sea Decimal (para evitar errores con float)
     total = sum(Decimal(str(item['price'])) for item in cart)
 
     if request.method == 'POST':
@@ -65,30 +65,28 @@ def checkout(request):
         address = request.POST.get('address')
         city = request.POST.get('city')
 
-        # 1. Crear la Orden (Aún no está confirmada hasta que termine el bloque atomic)
+        # 1. Crear la Orden como PENDIENTE
         order = Order.objects.create(
             name=name,
             email=email,
             address=address,
             city=city,
-            total_price=total
+            total_price=total,
+            status='PENDING' # Importante: Nace pendiente
         )
 
         try:
+            # 2. Lógica de Stock (Bloqueo Pesimista)
             for item in cart:
-                # 2. BLOQUEO DE BASE DE DATOS (Lo más importante)
-                # select_for_update() dice: "Base de datos, dame este stock y NO DEJES que nadie más lo toque hasta que yo termine".
                 stock_item = Stock.objects.select_for_update().get(
                     product_id=item['product_id'], 
                     size=item['size']
                 )
 
-                # 3. Verificación de Stock en Tiempo Real
                 if stock_item.quantity < 1:
-                    # Si alguien nos ganó el click milisegundos antes, esto salta.
                     raise ValueError(f"Lo sentimos, el producto {item['name']} (Talla {item['size']}) se acaba de agotar.")
 
-                # 4. Crear Item de Orden
+                # Crear Item
                 OrderItem.objects.create(
                     order=order,
                     product_name=item['name'],
@@ -97,20 +95,95 @@ def checkout(request):
                     quantity=1
                 )
 
-                # 5. Restar Stock
+                # Restar Stock (Reserva temporal)
                 stock_item.quantity -= 1
                 stock_item.save()
 
+            # --- AQUÍ CAMBIA: INTEGRACIÓN WEBPAY ---
+            
+            # Inicializamos el servicio
+            service = WebpayService()
+            session_id = str(uuid.uuid4())
+            return_url = request.build_absolute_uri(reverse('webpay_callback'))
+            
+            # Llamamos a Transbank
+            response = service.create_transaction(
+                buy_order=str(order.id),
+                session_id=session_id,
+                amount=float(total),
+                return_url=return_url
+            )
+            
+            # Guardamos el token para validar después
+            order.webpay_token = response['token']
+            order.save()
+            
+            # Redirigimos al banco (NO borramos el carrito todavía)
+            return redirect(response['url'] + '?token_ws=' + response['token'])
+
         except ValueError as e:
-            # Si algo falla (falta stock), el @transaction.atomic deshace TODO (borra la orden creada arriba)
             messages.error(request, str(e))
             return redirect('view_cart')
-
-        # Si llegamos aquí, todo salió perfecto. Limpiamos carrito.
-        del request.session['cart']
-        return redirect('order_success', pk=order.id)
+        except Exception as e:
+            messages.error(request, f"Error al iniciar pago: {str(e)}")
+            return redirect('view_cart')
 
     return render(request, 'store/checkout.html', {'cart': cart, 'total': total})
+
+def webpay_callback(request):
+    token = request.GET.get('token_ws')
+    
+    if not token:
+        # Caso: Usuario cancela en el formulario de Webpay (TBK_TOKEN)
+        messages.error(request, "La transacción fue anulada por el usuario.")
+        return redirect('view_cart')
+
+    try:
+        service = WebpayService()
+        response = service.commit_transaction(token) # Preguntamos a Transbank: "¿Pagó?"
+        
+        # Buscamos la orden
+        order = get_object_or_404(Order, webpay_token=token)
+        
+        if response['status'] == 'AUTHORIZED' and response['response_code'] == 0:
+            # --- CASO ÉXITO ---
+            order.status = 'PAID'
+            order.save()
+            
+            # Ahora sí borramos el carrito
+            if 'cart' in request.session:
+                del request.session['cart']
+            
+            messages.success(request, "¡Pago exitoso! Tu pedido está en camino.")
+            return redirect('order_success', pk=order.id)
+            
+        else:
+            # --- CASO FALLO/RECHAZO ---
+            order.status = 'REJECTED'
+            order.save()
+            
+            # CRÍTICO: Devolver el Stock (Rollback manual)
+            for item in order.items.all():
+                # Buscamos el stock exacto
+                try:
+                    # Ojo: Aquí asumimos que el producto y talla existen en tu lógica de stock
+                    # Debes adaptar esto si tu modelo Stock usa IDs diferentes, pero basado en tu código:
+                    product = Product.objects.get(name=item.product_name) # Ojo con esto si cambias nombres
+                    # Mejor sería haber guardado product_id en OrderItem, pero por ahora:
+                    stock_item = Stock.objects.filter(product=product, size=item.size).first()
+                    if stock_item:
+                        stock_item.quantity += 1
+                        stock_item.save()
+                except Exception as e:
+                    print(f"Error devolviendo stock: {e}")
+
+            messages.error(request, "El pago fue rechazado por el banco. Hemos liberado el stock.")
+            return redirect('view_cart')
+
+    except Exception as e:
+        print(f"Error técnico en callback: {e}")
+        messages.error(request, "Ocurrió un error al procesar el pago.")
+        return redirect('view_cart')
 
 def order_success(request, pk):
     order = get_object_or_404(Order, pk=pk)
