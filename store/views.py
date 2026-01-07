@@ -8,6 +8,10 @@ from .serializers import ProductSerializer, OrderSerializer
 from django.db import transaction
 from django.contrib import messages
 from decimal import Decimal
+from .webpay import WebpayService
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from django.urls import reverse
 
 def store_home(request):
     products = Product.objects.all()
@@ -197,3 +201,79 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     http_method_names = ['post']
+
+@api_view(['GET', 'POST', 'PUT']) # Webpay a veces retorna por POST, a veces GET
+def validate_payment(request):
+    """
+    Endpoint de Callback: Transbank redirige aquí después del pago.
+    """
+    token = request.GET.get('token_ws') or request.data.get('token_ws')
+
+    if not token:
+        # Caso: Usuario aborta la compra en el formulario Webpay
+        return Response({'status': 'ABORTED', 'message': 'Compra anulada por usuario'}, status=400)
+
+    try:
+        service = WebpayService()
+        # Confirmamos la transacción con Transbank (Commit)
+        response = service.commit_transaction(token)
+        
+        # Recuperamos la orden local
+        order = Order.objects.get(webpay_token=token)
+
+        if response['status'] == 'AUTHORIZED' and response['response_code'] == 0:
+            # --- ÉXITO ---
+            order.status = 'PAID'
+            order.save()
+            return Response({
+                'message': 'Pago exitoso',
+                'order_id': order.id,
+                'status': 'PAID',
+                'amount': order.total_price,
+                'details': response
+            })
+        else:
+            # --- RECHAZO (Senior Logic: Rollback de Stock) ---
+            order.status = 'REJECTED'
+            order.save()
+            
+            # Devolvemos los productos al inventario
+            for item in order.items.all():
+                # Nota: Esto asume que el producto y talla siguen existiendo
+                # En un sistema real, usaríamos product_id guardado en OrderItem
+                try:
+                    product = Product.objects.get(name=item.product_name)
+                    stock_item = Stock.objects.filter(product=product, size=item.size).first()
+                    if stock_item:
+                        stock_item.quantity += item.quantity
+                        stock_item.save()
+                except Exception as e:
+                    print(f"Error crítico devolviendo stock: {e}")
+
+            return Response({
+                'message': 'Pago rechazado o anulado. Stock liberado.',
+                'status': 'REJECTED',
+                'details': response
+            }, status=400)
+
+    except Order.DoesNotExist:
+        return Response({'error': 'Orden no encontrada para este token'}, status=404)
+    except Exception as e:
+        return Response({'error': f'Error técnico: {str(e)}'}, status=500)
+
+def track_orders(request):
+    orders = None
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        if email:
+            # Buscamos todas las órdenes de ese correo, ordenadas por fecha (más reciente primero)
+            orders = Order.objects.filter(email=email).order_by('-created_at')
+    
+    return render(request, 'store/track_orders.html', {'orders': orders})
+
+def order_detail(request, pk):
+    # Buscamos el pedido o devolvemos error 404 si no existe
+    order = get_object_or_404(Order, pk=pk)
+    
+    # Renderizamos la plantilla con la información del pedido
+    return render(request, 'store/order_detail.html', {'order': order})

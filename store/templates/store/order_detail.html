@@ -1,0 +1,67 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto; padding: 40px 20px;">
+    
+    <a href="{% url 'track_orders' %}" style="text-decoration: none; color: var(--text-gray); display: flex; align-items: center; gap: 10px; margin-bottom: 30px;">
+        <i class="fas fa-arrow-left"></i> Volver a Mis Pedidos
+    </a>
+
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; border-bottom: 2px solid var(--gengar-primary); padding-bottom: 20px;">
+        <div>
+            <h1 style="margin: 0; font-size: 2.5rem; text-transform: uppercase;">Pedido <span style="color: var(--gengar-neon);">#{{ order.id }}</span></h1>
+            <p style="color: var(--text-gray); margin-top: 5px;">Realizado el: {{ order.created_at|date:"d F Y, H:i" }}</p>
+        </div>
+        <div style="text-align: right;">
+            <span style="background: {% if order.status == 'PAID' %}#00ff00{% elif order.status == 'PENDING' %}#ffaa00{% else %}#ff0000{% endif %}; color: black; padding: 5px 15px; font-weight: bold; border-radius: 5px; text-transform: uppercase;">
+                {{ order.get_status_display }}
+            </span>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 40px; flex-wrap: wrap;">
+        
+        <div style="flex: 2; min-width: 300px;">
+            <h3 style="color: white; margin-bottom: 20px;">Artículos Comprados</h3>
+            
+            <div style="background: #120821; border-radius: 10px; border: 1px solid #333; overflow: hidden;">
+                {% for item in order.items.all %}
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #333;">
+                        <div style="display: flex; align-items: center; gap: 20px;">
+                            <div style="background: #2a1b3d; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 5px; color: var(--gengar-neon);">
+                                <i class="fas fa-tshirt fa-lg"></i>
+                            </div>
+                            <div>
+                                <h4 style="margin: 0; font-size: 1.1rem;">{{ item.product_name }}</h4>
+                                <p style="margin: 5px 0 0; color: var(--text-gray); font-size: 0.9rem;">
+                                    Talla: <span style="color: white;">{{ item.size }}</span> | Cantidad: {{ item.quantity }}
+                                </p>
+                            </div>
+                        </div>
+                        <div style="font-weight: bold; font-size: 1.1rem;">
+                            ${{ item.price }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div style="flex: 1; min-width: 250px;">
+            
+            <div style="background: #120821; padding: 25px; border-radius: 10px; border: 1px solid var(--gengar-primary); margin-bottom: 20px;">
+                <h3 style="margin-top: 0; color: var(--gengar-neon);">Datos de Envío</h3>
+                <p style="margin-bottom: 5px; font-weight: bold;">{{ order.name }}</p>
+                <p style="margin-bottom: 5px; color: var(--text-gray);">{{ order.email }}</p>
+                <p style="margin-bottom: 5px; color: var(--text-gray);">{{ order.address }}</p>
+                <p style="margin: 0; color: var(--text-gray);">{{ order.city }}</p>
+            </div>
+
+            <div style="background: var(--gengar-neon); color: black; padding: 25px; border-radius: 10px; text-align: center;">
+                <h3 style="margin: 0; font-size: 1rem; text-transform: uppercase;">Total Pagado</h3>
+                <h2 style="margin: 10px 0; font-size: 2.5rem;">${{ order.total_price }}</h2>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto; padding: 50px 20px; text-align: center;">
+
+    <h1 style="font-size: 3rem; margin-bottom: 30px; text-transform: uppercase;">Mis <span style="color: var(--gengar-neon);">Compras</span> 🛍️</h1>
+
+    <div style="background: #120821; padding: 30px; border: 1px solid var(--gengar-primary); border-radius: 10px; margin-bottom: 40px;">
+        <p style="color: var(--text-gray); margin-bottom: 20px;">Ingresa tu correo para ver tu historial de pedidos:</p>
+        
+        <form method="POST" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+            {% csrf_token %}
+            <input type="email" name="email" required placeholder="tu@email.com" 
+                   style="padding: 15px; width: 300px; background: black; border: 1px solid var(--gengar-primary); color: white; font-size: 1rem;">
+            
+            <button type="submit" class="btn-gengar" style="border: none; font-size: 1rem; cursor: pointer;">
+                BUSCAR
+            </button>
+        </form>
+    </div>
+
+    {% if orders %}
+        <h2 style="text-align: left; margin-bottom: 20px;">Encontramos {{ orders|length }} pedido(s):</h2>
+       {% for order in orders %}
+            <div style="background: #120821; border-left: 5px solid {% if order.status == 'PAID' %}#00ff00{% elif order.status == 'PENDING' %}#ffaa00{% else %}#ff0000{% endif %}; padding: 20px; margin-bottom: 20px; text-align: left; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                
+                <div style="flex: 1;">
+                    <h3 style="margin: 0;">Pedido #{{ order.id }}</h3>
+                    <p style="color: var(--text-gray); margin: 5px 0;">{{ order.created_at|date:"d M Y" }}</p>
+                    <span style="background: rgba(255,255,255,0.1); padding: 5px 10px; font-size: 0.8rem; border-radius: 4px;">
+                        {{ order.get_status_display }}
+                    </span>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 30px;">
+                    <div style="text-align: right;">
+                        <h3 style="color: var(--gengar-neon); margin: 0;">${{ order.total_price }}</h3>
+                        <p style="font-size: 0.9rem; margin: 0;">{{ order.items.count }} ítems</p>
+                    </div>
+
+                    <a href="{% url 'order_detail' order.id %}" class="btn-gengar" style="font-size: 0.9rem; padding: 10px 20px;">
+                        VER DETALLE
+                    </a>
+                </div>
+
+            </div>
+        {% endfor %}
+
+    {% elif request.method == 'POST' %}
+        <p style="color: #ff4444; font-size: 1.2rem;">No encontramos pedidos con ese correo 😢</p>
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -1,47 +1,71 @@
 /* store/static/store/style.css */
 
+/* --- 1. CONFIGURACIÓN BASE & FUENTES --- */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=Syne:wght@400;700;800&display=swap');
+
 :root {
-    /* PALETA GENGAR URBAN */
-    --gengar-dark: #1A0B2E;       /* Fondo muy oscuro (casi negro morado) */
-    --gengar-primary: #4A148C;    /* Morado Base */
-    --gengar-neon: #B026FF;       /* Morado Neón para acentos/botones */
-    --text-white: #F5F5F5;
-    --text-gray: #B39DDB;
-    --urban-black: #050505;
+    /* PALETA "CYBER-LUXURY" */
+    --bg-color: #050505;
+    --card-bg: #0a0a0a;
+    --accent: #8A2BE2;
+    --neon: #D946EF;
+    --text-main: #FFFFFF;
+    --text-muted: #A3A3A3;
+    
+    --font-heading: 'Syne', sans-serif;
+    --font-body: 'Outfit', sans-serif;
+}
+
+/* RESE PRO (Evita scroll horizontal fantasma) */
+*, *::before, *::after {
+    box-sizing: border-box;
 }
 
 body {
-    background-color: var(--gengar-dark);
-    color: var(--text-white);
-    font-family: 'Arial Black', 'Helvetica Neue', sans-serif; /* Fuente gruesa tipo Streetwear */
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: var(--font-body);
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    letter-spacing: 0.5px;
+    overflow-x: hidden; /* CRÍTICO PARA MÓVIL */
 }
 
-/* --- 1. TOP TICKER (Marquesina) --- */
+a { text-decoration: none; color: inherit; transition: 0.3s; }
+img { max-width: 100%; height: auto; display: block; }
+
+/* --- 2. TIPOGRAFÍA RESPONSIVA --- */
+h1, h2, h3, h4, .nav-brand, .ticker-item {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+/* --- 3. MARQUESINA (TICKER) --- */
 .ticker-wrap {
-    width: 100%;
-    background-color: var(--gengar-neon);
-    overflow: hidden;
-    height: 40px;
+    background-color: var(--accent);
+    height: 30px; /* Más delgado en móvil */
     display: flex;
     align-items: center;
+    overflow: hidden;
+    border-bottom: 1px solid var(--neon);
 }
 
 .ticker {
     display: inline-block;
     white-space: nowrap;
     padding-left: 100%;
-    animation: ticker 15s linear infinite;
+    animation: ticker 20s linear infinite; /* Más lento para que se lea bien */
 }
 
 .ticker-item {
-    display: inline-block;
-    padding: 0 2rem;
-    font-size: 1rem;
-    font-weight: bold;
-    color: var(--urban-black);
-    text-transform: uppercase;
+    font-size: 0.75rem; /* Letra más pequeña en móvil */
+    color: white;
+    padding: 0 1.5rem;
+    letter-spacing: 1px;
 }
 
 @keyframes ticker {
@@ -49,167 +73,216 @@ body {
     100% { transform: translate3d(-100%, 0, 0); }
 }
 
-/* --- NAVBAR --- */
+/* --- 4. NAVBAR (MÓVIL PRIMERO) --- */
 .navbar {
-    background-color: var(--urban-black);
-    padding: 1rem 2rem;
-    border-bottom: 2px solid var(--gengar-primary);
+    background: rgba(5, 5, 5, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 1rem;
+    border-bottom: 1px solid #222;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column; /* Apilado en móvil */
     align-items: center;
+    gap: 15px;
     position: sticky;
     top: 0;
     z-index: 100;
 }
 
 .nav-brand {
-    font-size: 1.8rem;
-    color: var(--gengar-neon);
-    text-transform: uppercase;
-    text-decoration: none;
+    font-size: 1.5rem;
+    color: white;
     letter-spacing: -1px;
+}
+.nav-brand span { color: var(--neon); }
+
+.nav-links { 
+    display: flex; 
+    gap: 15px; 
+    flex-wrap: wrap; /* Si no caben, bajan */
+    justify-content: center;
 }
 
 .nav-links a {
-    color: var(--text-white);
-    text-decoration: none;
-    margin-left: 20px;
-    font-weight: bold;
+    font-size: 0.8rem;
+    font-weight: 500;
     text-transform: uppercase;
-    font-size: 0.9rem;
-    transition: color 0.3s;
+    color: var(--text-muted);
 }
 
-.nav-links a:hover {
-    color: var(--gengar-neon);
-}
+.nav-links a:hover { color: white; border-bottom: 1px solid var(--neon); }
 
-/* --- POPUP DE DESCUENTO --- */
-.popup-overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.85);
-    display: flex; /* Se activará con JS */
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.popup-overlay.active {
-    visibility: visible;
-    opacity: 1;
-}
-
-.popup-content {
-    background: var(--urban-black);
-    border: 2px solid var(--gengar-neon);
-    padding: 3rem;
+/* --- 5. HERO SECTION (PORTADA) --- */
+/* El contenedor inline del HTML debe tener clase o ser manejado aquí */
+.hero-text-box {
     text-align: center;
-    max-width: 500px;
-    position: relative;
-    box-shadow: 0 0 20px var(--gengar-primary);
+    z-index: 2;
+    padding: 0 15px; /* Margen lateral para que no pegue al borde */
+    width: 100%;
 }
 
-.close-btn {
-    position: absolute;
-    top: 10px; right: 15px;
-    font-size: 1.5rem;
+.hero-title {
+    /* MAGIA RESPONSIVA: clamp(mínimo, ideal, máximo) */
+    font-size: clamp(2.5rem, 10vw, 6rem); 
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    text-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    word-wrap: break-word; /* Rompe la palabra si es muy larga */
+}
+
+/* --- 6. BOTONES --- */
+.btn-gengar {
+    background: rgba(0,0,0,0.6);
+    border: 1px solid white;
+    color: white;
+    padding: 12px 25px;
+    text-transform: uppercase;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8rem;
     cursor: pointer;
-    color: var(--text-gray);
-}
-
-.discount-code {
-    background: var(--gengar-neon);
-    color: var(--urban-black);
-    padding: 10px;
-    font-size: 1.5rem;
-    margin: 20px 0;
+    transition: all 0.3s;
     display: inline-block;
-    font-weight: bold;
+    backdrop-filter: blur(4px);
 }
 
-/* --- PRODUCT GRID --- */
-.section-title {
-    text-align: center;
-    font-size: 2.5rem;
-    text-transform: uppercase;
-    margin: 3rem 0 1.5rem 0;
-    color: var(--text-white);
-    text-shadow: 2px 2px var(--gengar-primary);
+.btn-gengar:hover {
+    background: var(--neon);
+    border-color: var(--neon);
+    color: black;
+    box-shadow: 0 0 20px rgba(217, 70, 239, 0.4);
 }
 
+/* --- 7. GRID DE PRODUCTOS --- */
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 2rem;
-    padding: 2rem;
-    max-width: 1200px;
+    /* En móvil: 1 columna, pero mínimo 160px para que quepan 2 si el celu es ancho */
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+    gap: 1rem;
+    padding: 1rem;
+    max-width: 1400px;
     margin: 0 auto;
-}
-
-.product-card {
-    background-color: #120821;
-    border: 1px solid var(--gengar-primary);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(176, 38, 255, 0.2);
-    border-color: var(--gengar-neon);
 }
 
 .product-image img {
     width: 100%;
-    height: 300px;
+    height: 250px; /* Más bajitas en móvil */
     object-fit: cover;
-    filter: grayscale(20%); /* Efecto urbano desaturado */
-    transition: filter 0.3s;
+    border-radius: 4px;
 }
 
-.product-card:hover img {
-    filter: grayscale(0%);
-}
+.product-info h3 { font-size: 1rem; margin: 5px 0; }
 
-.product-info {
-    padding: 1rem;
+/* --- 8. FOOTER Y EXTRAS --- */
+.content { flex: 1; width: 100%; }
+
+footer {
+    border-top: 1px solid #222;
+    background: #000;
+    padding: 2rem 1rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
     text-align: center;
 }
 
-.btn-gengar {
-    background-color: var(--gengar-primary);
-    color: white;
-    padding: 10px 20px;
-    text-decoration: none;
-    text-transform: uppercase;
-    font-weight: bold;
-    display: inline-block;
-    margin-top: 10px;
-    border: none;
-    cursor: pointer;
+/* --- 9. POPUP Y REVIEWS --- */
+.popup-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9); /* Más oscuro en móvil */
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    visibility: hidden; opacity: 0;
+    transition: opacity 0.3s ease;
+    padding: 20px; /* Espacio para que no toque los bordes */
+}
+.popup-overlay.active { visibility: visible; opacity: 1; }
+
+.popup-content {
+    background: #050505;
+    border: 1px solid var(--neon);
+    padding: 2rem;
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+}
+.close-btn { position: absolute; top: 10px; right: 15px; font-size: 1.5rem; color: white; }
+.discount-code {
+    background: rgba(255,255,255,0.05);
+    border: 2px dashed var(--neon);
+    color: var(--neon);
+    padding: 10px;
+    font-size: 1.5rem;
+    font-family: var(--font-heading);
+    margin: 15px 0;
+    display: block; /* Ocupa todo el ancho */
 }
 
-.btn-gengar:hover {
-    background-color: var(--gengar-neon);
-    color: var(--urban-black);
-}
-
-/* --- REVIEWS SECTION --- */
+/* Reviews Scroll Horizontal en Móvil (Estilo Instagram) */
 .reviews-section {
-    background-color: var(--urban-black);
-    padding: 4rem 2rem;
+    padding: 3rem 1rem;
     text-align: center;
-    margin-top: 4rem;
+    background: linear-gradient(to top, #000, #0a0a0a);
+    
+    /* Flex para scroll lateral en móvil */
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 1rem;
+    justify-content: flex-start;
+    -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
 }
 
 .review-card {
-    border: 1px solid var(--text-gray);
-    display: inline-block;
-    padding: 20px;
-    margin: 10px;
-    max-width: 300px;
-    font-style: italic;
+    border: 1px solid #333;
+    background: rgba(255,255,255,0.03);
+    padding: 1.5rem;
+    min-width: 260px; /* Ancho fijo para el scroll */
+    text-align: left;
+    border-radius: 8px;
+}
+
+/* --- 10. MEDIA QUERIES (VERSIÓN ESCRITORIO) --- */
+/* Aquí decimos: "Si la pantalla es mayor a 768px (Tablet/PC), haz esto..." */
+@media (min-width: 768px) {
+    
+    .ticker-wrap { height: 35px; }
+    .ticker-item { font-size: 0.9rem; padding: 0 3rem; }
+
+    .navbar {
+        flex-direction: row; /* Vuelve a ponerse horizontal */
+        justify-content: space-between;
+        padding: 1.5rem 3rem;
+    }
+
+    .nav-brand { font-size: 1.8rem; }
+    .nav-links { gap: 30px; }
+    .nav-links a { font-size: 0.9rem; }
+
+    /* Grid más grande */
+    .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 3rem;
+        padding: 3rem;
+    }
+    .product-image img { height: 350px; }
+
+    /* Reviews en cuadrícula centrada en PC */
+    .reviews-section {
+        display: block;
+        overflow-x: visible;
+    }
+    .review-card {
+        display: inline-block;
+        min-width: unset;
+        max-width: 300px;
+        margin: 1rem;
+        text-align: center;
+    }
+    
+    /* Botones más grandes */
+    .btn-gengar { font-size: 0.9rem; padding: 15px 35px; }
 }

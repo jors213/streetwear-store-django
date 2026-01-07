@@ -2,16 +2,18 @@
 
 {% block content %}
 
-<div style="height: 80vh; background: url('/media/products/PoleronBangAzul.png') center/cover; display:flex; align-items:center; justify-content:center; position:relative;">
-    <div style="background: rgba(0,0,0,0.6); padding: 2rem; text-align:center; border: 2px solid var(--gengar-neon);">
-        <h1 style="font-size: 4rem; margin:0; text-transform:uppercase;">Urban <span style="color:var(--gengar-neon)">Chaos</span></h1>
-        <p style="font-size: 1.2rem;">Viste la calle. Viste Gengar.</p>
-        <a href="#nuevas" class="btn-gengar" style="margin-top:20px; font-size:1.2rem;">Ver Colección</a>
+<div style="height: 85vh; background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('/media/products/PoleronBangAzul.png') center/cover; display:flex; align-items:center; justify-content:center; position:relative;">
+    
+    <div class="hero-text-box">
+        <h1 class="hero-title">URBAN <span style="color:var(--neon); font-style: italic;">CHAOS</span></h1>
+        <p style="font-size: 1.2rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px;">Viste la calle. Viste Gengar.</p>
+        <a href="#nuevas" class="btn-gengar">Ver Colección 2026</a>
     </div>
+
 </div>
 
 <div id="nuevas">
-    <h2 class="section-title">🔥 Nuevas Adquisiciones 🔥</h2>
+    <h2 class="section-title"> Nuevas Adquisiciones </h2>
     <div class="products-grid">
         {% for product in products %}
             {% if product.is_new_arrival %}

@@ -1,55 +1,68 @@
-{% extends 'store/base.html' %} {% block content %}
+{% extends 'store/base.html' %} 
 
-<div style="max-width: 800px; margin: 0 auto; padding: 20px; font-family: sans-serif;">
+{% block content %}
+
+<div style="max-width: 1000px; margin: 0 auto; padding: 40px 20px;">
   
-  <a href="{% url 'store_home' %}" style="text-decoration: none; color: #333;">← Seguir comprando</a>
+  <a href="{% url 'store_home' %}" style="text-decoration: none; color: var(--text-gray);">← Seguir comprando</a>
 
-  <h1>Tu Carrito de Compras 🛒</h1>
+  <h1 style="margin: 20px 0; font-size: 3rem;">Tu Carrito <span style="color: var(--gengar-neon);">🛒</span></h1>
 
   {% if cart %}
-    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-      <thead>
-        <tr style="background: #f0f0f0; text-align: left;">
-          <th style="padding: 10px;">Producto</th>
-          <th style="padding: 10px;">Talla</th>
-          <th style="padding: 10px;">Precio</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for item in cart %}
-          <tr style="border-bottom: 1px solid #ddd;">
-            <td style="padding: 15px; display: flex; align-items: center; gap: 15px;">
-               <img src="{{ item.image_url }}" style="width: 60px; border-radius: 5px;">
-               <span style="font-weight: bold;">{{ item.name }}</span>
-            </td>
-            <td style="padding: 15px;">
-                <span style="background: black; color: white; padding: 5px 10px;">
-                    {{ item.size }}
-                </span>
-            </td>
-            <td style="padding: 15px;">${{ item.price }}</td>
-            <td style="padding: 15px;">
-                <a href="{% url 'remove_from_cart' forloop.counter0 %}" style="color: red; text-decoration: none; font-weight: bold;">
-                    Eliminar
-                </a>
-            </td>
-          </tr>
+    {% if messages %}
+        {% for message in messages %}
+            <div style="background: #ff4444; color: white; padding: 10px; margin-bottom: 10px;">{{ message }}</div>
         {% endfor %}
-      </tbody>
-    </table>
+    {% endif %}
 
-    <div style="text-align: right; margin-top: 20px;">
-        <h2>Total a pagar: ${{ total }}</h2>
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px; background: #120821; border: 1px solid var(--gengar-primary);">
+        <thead>
+            <tr style="background: var(--gengar-primary); color: white; text-align: left;">
+            <th style="padding: 15px;">Producto</th>
+            <th style="padding: 15px;">Talla</th>
+            <th style="padding: 15px;">Precio</th>
+            <th style="padding: 15px;">Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart %}
+            <tr style="border-bottom: 1px solid #333;">
+                <td style="padding: 15px; display: flex; align-items: center; gap: 20px;">
+                <img src="{{ item.image_url }}" style="width: 70px; border-radius: 5px; border: 1px solid #555;">
+                <span style="font-weight: bold; font-size: 1.1rem;">{{ item.name }}</span>
+                </td>
+                <td style="padding: 15px;">
+                    <span style="background: var(--gengar-neon); color: black; padding: 5px 12px; font-weight: bold; border-radius: 2px;">
+                        {{ item.size }}
+                    </span>
+                </td>
+                <td style="padding: 15px; font-size: 1.1rem;">${{ item.price }}</td>
+                <td style="padding: 15px;">
+                    <a href="{% url 'remove_from_cart' forloop.counter0 %}" style="color: #ff4444; text-decoration: none; font-weight: bold; font-size: 0.9rem;">
+                        <i class="fas fa-trash"></i> ELIMINAR
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 30px; gap: 30px;">
+        <h2 style="margin: 0;">Total a pagar: <span style="color: var(--gengar-neon);">${{ total }}</span></h2>
         <a href="{% url 'checkout' %}">
-            <button style="background: #28a745; color: white; padding: 15px 30px; border: none; font-size: 1.2rem; cursor: pointer; border-radius: 5px;">
-                PAGAR AHORA
+            <button class="btn-gengar" style="font-size: 1.2rem; padding: 15px 40px;">
+                IR A PAGAR →
             </button>
         </a>
     </div>
 
   {% else %}
-    <div style="text-align: center; margin-top: 50px;">
-        <p style="font-size: 1.5rem; color: #888;">Tu carrito está vacío ☁️</p>
+    <div style="text-align: center; margin-top: 80px; padding: 40px; border: 2px dashed var(--text-gray);">
+        <i class="fas fa-ghost" style="font-size: 4rem; color: var(--gengar-neon); margin-bottom: 20px;"></i>
+        <p style="font-size: 1.5rem; color: var(--text-gray);">Tu carrito está vacío.</p>
+        <a href="{% url 'store_home' %}" class="btn-gengar">Ver Colección</a>
     </div>
   {% endif %}
 </div>

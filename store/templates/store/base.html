@@ -38,6 +38,11 @@
             <a href="#nuevas">New Arrivals</a>
             <a href="#poleras">Poleras</a>
             <a href="#pantalones">Pantalones</a>
+
+            <a href="{% url 'track_orders' %}" style="color: var(--gengar-neon);">
+                <i class="fas fa-search"></i> Mis Pedidos
+            </a>
+
             <a href="{% url 'view_cart' %}">
                 <i class="fas fa-shopping-cart"></i> Carrito
                 {% if request.session.cart|length > 0 %}

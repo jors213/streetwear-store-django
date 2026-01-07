@@ -1,61 +1,85 @@
 {% extends 'store/base.html' %}
 
 {% block content %}
-<div style="max-width: 800px; margin: 0 auto; padding: 20px; font-family: sans-serif;">
+<div style="max-width: 900px; margin: 0 auto; padding: 40px 20px;">
   
-  <a href="{% url 'view_cart' %}" style="text-decoration: none; color: #333;">← Volver al carrito</a>
+  {% if messages %}
+    <div style="margin-bottom: 20px;">
+        {% for message in messages %}
+            <div style="background: #ff4444; color: white; padding: 15px; border-radius: 5px; border: 1px solid red;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+  {% endif %}
 
-  <h1>Finalizar Compra 📦</h1>
+  <a href="{% url 'view_cart' %}" style="text-decoration: none; color: var(--text-gray); font-size: 0.9rem;">← VOLVER AL CARRITO</a>
 
+  <h1 style="font-size: 3rem; margin: 20px 0; text-transform: uppercase;">Finalizar <span style="color: var(--gengar-neon);">Compra</span> 📦</h1>
 
-  <div style="display: flex; gap: 40px; margin-top: 20px;">
+  <div style="display: flex; gap: 40px; flex-wrap: wrap;">
     
-    <div style="flex: 1;">
-      <h3>1. Tus Datos de Envío</h3>
+    <div style="flex: 2; min-width: 300px;">
+      <h3 style="border-bottom: 2px solid var(--gengar-primary); padding-bottom: 10px;">1. Datos de Envío</h3>
       
-      <form method="POST">
+      <form method="POST" action="">
         {% csrf_token %}
         
-        <div style="margin-bottom: 15px;">
-            <label>Nombre Completo:</label><br>
-            <input type="text" name="name" required style="width: 100%; padding: 10px; margin-top: 5px;">
+        <div style="margin-bottom: 20px;">
+            <label style="color: var(--text-gray);">Nombre Completo</label>
+            <input type="text" name="name" required placeholder="Ej: Jors Tester"
+                   style="width: 100%; padding: 15px; margin-top: 5px; background: #120821; border: 1px solid var(--gengar-primary); color: white; font-size: 1rem;">
         </div>
 
-        <div style="margin-bottom: 15px;">
-            <label>Correo Electrónico:</label><br>
-            <input type="email" name="email" required style="width: 100%; padding: 10px; margin-top: 5px;">
+        <div style="margin-bottom: 20px;">
+            <label style="color: var(--text-gray);">Correo Electrónico</label>
+            <input type="email" name="email" required placeholder="ejemplo@correo.com"
+                   style="width: 100%; padding: 15px; margin-top: 5px; background: #120821; border: 1px solid var(--gengar-primary); color: white; font-size: 1rem;">
         </div>
 
-        <div style="margin-bottom: 15px;">
-            <label>Dirección de Envío:</label><br>
-            <input type="text" name="address" required style="width: 100%; padding: 10px; margin-top: 5px;">
+        <div style="margin-bottom: 20px;">
+            <label style="color: var(--text-gray);">Dirección de Envío</label>
+            <input type="text" name="address" required placeholder="Calle, Número, Comuna"
+                   style="width: 100%; padding: 15px; margin-top: 5px; background: #120821; border: 1px solid var(--gengar-primary); color: white; font-size: 1rem;">
         </div>
 
-        <div style="margin-bottom: 15px;">
-            <label>Ciudad:</label><br>
-            <input type="text" name="city" required style="width: 100%; padding: 10px; margin-top: 5px;">
+        <div style="margin-bottom: 20px;">
+            <label style="color: var(--text-gray);">Ciudad</label>
+            <input type="text" name="city" required placeholder="Santiago"
+                   style="width: 100%; padding: 15px; margin-top: 5px; background: #120821; border: 1px solid var(--gengar-primary); color: white; font-size: 1rem;">
         </div>
 
-
-        <button type="submit" style="background: black; color: white; padding: 15px 30px; border: none; font-size: 1.2rem; cursor: pointer; width: 100%; margin-top: 20px;">
-            CONFIRMAR PEDIDO
+        <button type="submit" class="btn-gengar" style="width: 100%; padding: 20px; font-size: 1.2rem; margin-top: 20px;">
+            PAGAR CON WEBPAY <i class="fas fa-credit-card"></i>
         </button>
         
       </form>
     </div>
 
-    <div style="flex: 1; background: #f9f9f9; padding: 20px; border-radius: 10px; height: fit-content;">
-      <h3>2. Resumen</h3>
-      
-      {% for item in cart %}
-        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
-            <span>{{ item.name }} ({{ item.size }})</span>
-            <span>${{ item.price }}</span>
-        </div>
-      {% endfor %}
+    <div style="flex: 1; min-width: 250px;">
+        <div style="background: #120821; padding: 25px; border: 2px solid var(--gengar-primary); box-shadow: 0 0 15px rgba(74, 20, 140, 0.3);">
+            <h3 style="margin-top: 0; color: var(--gengar-neon);">2. Resumen</h3>
+            
+            <div style="margin-bottom: 20px;">
+                {% for item in cart %}
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px;">
+                        <div>
+                            <div style="font-weight: bold;">{{ item.name }}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-gray);">Talla: {{ item.size }}</div>
+                        </div>
+                        <div style="font-weight: bold;">${{ item.price }}</div>
+                    </div>
+                {% endfor %}
+            </div>
 
-      <div style="margin-top: 20px; border-top: 2px solid black; padding-top: 10px;">
-          <h2>Total: ${{ total }}</h2>
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 2px dashed var(--gengar-neon); display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 1.2rem;">TOTAL:</span>
+                <span style="font-size: 1.5rem; color: var(--gengar-neon); font-weight: bold;">${{ total }}</span>
+            </div>
+      </div>
+      
+      <div style="margin-top: 20px; text-align: center; color: var(--text-gray); font-size: 0.8rem;">
+          <p><i class="fas fa-lock"></i> Pago 100% Seguro vía Transbank</p>
       </div>
     </div>
 
