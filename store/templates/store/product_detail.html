@@ -1,41 +1,52 @@
-{% extends 'store/base.html' %} {% block content %} 
-<div style="max-width: 800px; margin: 0 auto; padding: 20px; font-family: sans-serif;">
-  
-  <a href="{% url 'store_home' %}" style="text-decoration: none; color: #333;">← Volver a la tienda</a>
+{% extends 'store/base.html' %}
 
-  <div style="display: flex; gap: 40px; margin-top: 20px;">
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
+  
+  <a href="{% url 'store_home' %}" style="text-decoration: none; color: var(--text-muted); display: flex; align-items: center; gap: 10px; margin-bottom: 30px; transition: 0.3s;">
+      <i class="fas fa-arrow-left"></i> Volver a la tienda
+  </a>
+
+  <div style="display: flex; gap: 60px; flex-wrap: wrap;">
     
-    <div style="flex: 1;">
-      <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%; border-radius: 10px;">
+    <div style="flex: 1; min-width: 300px;">
+      <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%; border-radius: 5px; box-shadow: 0 0 30px rgba(255,255,255,0.05);">
     </div>
 
-    <div style="flex: 1;">
-      <h1 style="font-size: 2.5rem; margin-bottom: 10px;">{{ product.name }}</h1>
-      <p style="font-size: 1.5rem; color: #555;">${{ product.price }}</p>
-      <hr>
-            <h3>Selecciona tu talla:</h3>
+    <div style="flex: 1; min-width: 300px;">
+      
+      <h1 style="font-size: 3.5rem; margin-bottom: 10px; line-height: 1; text-transform: uppercase;">{{ product.name }}</h1>
+      
+      <p style="font-size: 2.5rem; color: var(--neon); margin-top: 0; font-weight: bold;">${{ product.price }}</p>
+      
+      <hr style="border-color: #333; margin: 30px 0;">
+            
+      <form method="POST">
+            {% csrf_token %}
+            
+            <p style="margin-bottom: 15px; color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;">Selecciona tu talla:</p>
 
-            <form method="POST">
-                {% csrf_token %} <div style="display: flex; gap: 10px;">
+            <div class="size-wrapper">
                 {% for stock in product.stock_set.all %}
                     {% if stock.quantity > 0 %}
-                        <div>
-                            <input type="radio" name="size" id="size_{{ stock.id }}" value="{{ stock.size }}">
-                            <label for="size_{{ stock.id }}" class="size-box">{{ stock.size }}</label>
+                        <div class="size-option">
+                            <input type="radio" name="size" id="size_{{ stock.id }}" value="{{ stock.size }}" required>
+                            <label for="size_{{ stock.id }}">{{ stock.size }}</label>
                         </div>
                     {% else %}
-                        <div class="disabled-box">{{ stock.size }}</div>
+                        <div class="size-option" style="opacity: 0.3; pointer-events: none;">
+                            <label style="border-style: dashed; cursor: not-allowed;" title="Agotado">{{ stock.size }}</label>
+                        </div>
                     {% endif %}
                 {% endfor %}
-                </div>
+            </div>
 
-                <br>
-                <a href="{% url 'checkout' %}">
-                    <button type="submit" style="background: black; color: white; padding: 15px 30px; border: none; font-size: 1rem; cursor: pointer;">
-                        AÑADIR AL CARRO
-                    </button>
-                </a>
-        </form>
+            <br>
+            
+            <button type="submit" class="btn-gengar" style="width: 100%; font-size: 1.2rem; padding: 20px; margin-top: 20px;">
+                AÑADIR AL CARRO <i class="fas fa-shopping-bag" style="margin-left: 10px;"></i>
+            </button>
+      </form>
     </div>
   </div>
 </div>

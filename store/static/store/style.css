@@ -1,10 +1,10 @@
 /* store/static/store/style.css */
 
 /* --- 1. CONFIGURACIÓN BASE & FUENTES --- */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=Syne:wght@400;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;600&display=swap');
 
 :root {
-    /* PALETA "CYBER-LUXURY" */
+    /* ... tus colores siguen igual ... */
     --bg-color: #050505;
     --card-bg: #0a0a0a;
     --accent: #8A2BE2;
@@ -12,8 +12,9 @@
     --text-main: #FFFFFF;
     --text-muted: #A3A3A3;
     
-    --font-heading: 'Syne', sans-serif;
-    --font-body: 'Outfit', sans-serif;
+    /* 👇 ACTUALIZA ESTAS DOS LÍNEAS */
+    --font-heading: 'Chakra Petch', sans-serif; /* Más futurista/recta */
+    --font-body: 'Inter', sans-serif;           /* Súper legible */
 }
 
 /* RESE PRO (Evita scroll horizontal fantasma) */
@@ -155,7 +156,6 @@ h1, h2, h3, h4, .nav-brand, .ticker-item {
 /* --- 7. GRID DE PRODUCTOS --- */
 .products-grid {
     display: grid;
-    /* En móvil: 1 columna, pero mínimo 160px para que quepan 2 si el celu es ancho */
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
     gap: 1rem;
     padding: 1rem;
@@ -285,4 +285,48 @@ footer {
     
     /* Botones más grandes */
     .btn-gengar { font-size: 0.9rem; padding: 15px 35px; }
+}
+/* --- SELECTORES DE TALLA (SIZE PILLS) --- */
+
+.size-wrapper {
+    display: flex;
+    gap: 15px; /* Espacio entre tallas */
+    margin: 20px 0;
+}
+
+/* 1. Ocultamos el input feo original */
+.size-option input[type="radio"] {
+    display: none;
+}
+
+/* 2. Estilizamos la etiqueta para que parezca un botón */
+.size-option label {
+    display: inline-block;
+    border: 1px solid #333;
+    background: rgba(255,255,255,0.05);
+    color: var(--text-muted);
+    padding: 12px 25px;
+    font-family: var(--font-heading); /* Chakra Petch */
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 60px;
+    text-align: center;
+}
+
+/* Efecto Hover (al pasar el mouse) */
+.size-option label:hover {
+    border-color: var(--neon);
+    color: white;
+    box-shadow: 0 0 10px rgba(217, 70, 239, 0.2);
+}
+
+/* 3. ESTADO ACTIVO: Cuando el input oculto está seleccionado */
+.size-option input[type="radio"]:checked + label {
+    background: var(--neon);
+    color: black; /* Texto negro para contraste */
+    border-color: var(--neon);
+    box-shadow: 0 0 20px rgba(217, 70, 239, 0.6); /* Resplandor fuerte */
+    font-weight: bold;
+    transform: scale(1.05); /* Pequeño pop al hacer click */
 }

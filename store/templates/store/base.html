@@ -13,7 +13,7 @@
     <div id="newsletter-popup" class="popup-overlay">
         <div class="popup-content">
             <span class="close-btn" onclick="closePopup()">&times;</span>
-            <h2 style="color: var(--gengar-neon);">¡ESPERA!</h2>
+            <h2 style="color: var(--neon);">¡ESPERA!</h2>
             <p>Únete al lado oscuro del streetwear.</p>
             <p>Usa este código en tu primera compra:</p>
             <div class="discount-code">GENGAR10</div>
@@ -25,7 +25,7 @@
     <div class="ticker-wrap">
         <div class="ticker">
             <div class="ticker-item">ENVÍOS GRATIS POR COMPRAS SOBRE $50.000</div>
-            <div class="ticker-item">🔥 NUEVA COLECCIÓN DISPONIBLE 🔥</div>
+            <div class="ticker-item">NUEVA COLECCIÓN DISPONIBLE</div>
             <div class="ticker-item">ENVÍOS A TODO CHILE 🇨🇱</div>
             <div class="ticker-item">ENVÍOS GRATIS POR COMPRAS SOBRE $50.000</div> </div>
     </div>
@@ -46,7 +46,7 @@
             <a href="{% url 'view_cart' %}">
                 <i class="fas fa-shopping-cart"></i> Carrito
                 {% if request.session.cart|length > 0 %}
-                    <span style="color: var(--gengar-neon);">({{ request.session.cart|length }})</span>
+                    <span style="color: var(--neon);">({{ request.session.cart|length }})</span>
                 {% endif %}
             </a>
         </div>
@@ -62,22 +62,25 @@
     </footer>
 
     <script>
-        // Lógica Senior: Usar localStorage para no molestar al usuario cada vez que recarga
         document.addEventListener("DOMContentLoaded", function() {
             const popup = document.getElementById('newsletter-popup');
+            
+            // 1. Verificamos si la "cookie" (localStorage) existe
             const hasSeenPopup = localStorage.getItem('hasSeenPopup');
 
+            // 2. Si NO existe (es primera vez), iniciamos el contador
             if (!hasSeenPopup) {
                 setTimeout(() => {
                     popup.classList.add('active');
-                }, 2000); // Aparece a los 2 segundos
+                }, 5000); // Lo subí a 5 segundos para no ser tan invasivo de entrada
             }
         });
 
         function closePopup() {
             const popup = document.getElementById('newsletter-popup');
             popup.classList.remove('active');
-            // Guardamos que ya lo vio
+            
+            // 3. ¡IMPORTANTE! Guardamos en la memoria que ya lo vio
             localStorage.setItem('hasSeenPopup', 'true');
         }
     </script>
