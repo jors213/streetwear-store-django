@@ -14,7 +14,7 @@ from rest_framework.decorators import api_view
 from django.urls import reverse
 
 def store_home(request):
-    products = Product.objects.all()
+    products = Product.objects.all().order_by('-id') 
     return render(request, 'store/store_home.html', {'products': products})
 
 def product_detail(request, pk):
